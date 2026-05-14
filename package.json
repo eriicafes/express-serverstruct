@@ -1,0 +1,61 @@
+{
+  "name": "expressstruct",
+  "version": "0.1.0",
+  "description": "Type safe and modular servers with Express",
+  "private": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsdown",
+    "release": "pnpm run build && changeset publish",
+    "watch": "vitest",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "express",
+    "server",
+    "DI",
+    "typescript"
+  ],
+  "author": "Eric Afes <eriicafes@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eriicafes/expressstruct.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eriicafes/expressstruct/issues"
+  },
+  "homepage": "https://github.com/eriicafes/expressstruct#readme",
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "@types/supertest": "^7.2.0",
+    "@vitest/coverage-v8": "^4.0.16",
+    "supertest": "^7.2.2",
+    "tsdown": "^0.18.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "peerDependencies": {
+    "@scalar/client-side-rendering": ">=0.1.7",
+    "express": ">=4.21.2 <6.0.0",
+    "zod": ">=4.0.0 <5.0.0",
+    "zod-openapi": ">=5.4.6 <6.0.0"
+  }
+}
