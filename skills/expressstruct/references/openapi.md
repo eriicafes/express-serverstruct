@@ -1,4 +1,4 @@
-# Expressstruct OpenAPI Reference
+# Express Serverstruct OpenAPI Reference
 
 Use this when the task specifically involves `openapi()`, `OpenAPIRoute`, `schemas()`, `jsonRequest()`, `jsonResponse()`, or `openapiRoutes()`.
 
@@ -26,7 +26,7 @@ Functional style is still supported here, but prefer it only when the surroundin
 Use `schemas()` to organize request and response Zod schemas together. Prefer a class whose static property names match the route `operationId`:
 
 ```ts
-import { schemas } from "expressstruct";
+import { schemas } from "express-serverstruct";
 import { z } from "zod";
 
 class UserRouteSchemas {
@@ -47,7 +47,7 @@ class UserRouteSchemas {
 Use `jsonRequest()` to build a typed `requestBody` for JSON routes and `jsonResponse()` to build JSON response entries:
 
 ```ts
-import { jsonRequest, jsonResponse } from "expressstruct";
+import { jsonRequest, jsonResponse } from "express-serverstruct";
 
 requestBody: jsonRequest(UserRouteSchemas.createUser.body, {
   description: "Create a user",
@@ -80,7 +80,7 @@ import {
   router,
   schemas,
   type Server,
-} from "expressstruct";
+} from "express-serverstruct";
 
 class UsersController extends Controller {
   private api = openapi();

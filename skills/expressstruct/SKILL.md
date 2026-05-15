@@ -1,16 +1,16 @@
 ---
-name: expressstruct
-description: Use when building an HTTP server with expressstruct — covers routes and controllers, async handlers, validation, request context, structured HTTP errors, and where to look for OpenAPI details.
+name: express-serverstruct
+description: Use when building an HTTP server with express-serverstruct — covers routes and controllers, async handlers, validation, request context, structured HTTP errors, and where to look for OpenAPI details.
 ---
 
-# Expressstruct
+# Express Serverstruct
 
 ## When to Use
 
 Use this skill when the user wants to:
 
-- build an HTTP server with Express using `expressstruct`
-- create or modify an `expressstruct` server
+- build an HTTP server with Express using `express-serverstruct`
+- create or modify an `express-serverstruct` server
 - add routes, route groups, or controllers
 - validate params, query, or body input with Zod
 - share typed request-scoped values with `context()`
@@ -18,7 +18,7 @@ Use this skill when the user wants to:
 
 Make sure the needed dependencies are installed:
 
-- core usage: `expressstruct`, `express`, `zod`
+- core usage: `express-serverstruct`, `express`, `zod`
 - OpenAPI usage: `zod-openapi`
 
 Open this reference when needed:
@@ -44,7 +44,7 @@ import {
   handler,
   router,
   type Server,
-} from "expressstruct";
+} from "express-serverstruct";
 
 class UsersController extends Controller {
   public routes() {
@@ -114,7 +114,7 @@ Use `validate(req, schema)` inside a handler when the route needs typed params, 
 Use `context<T>()` for request-scoped data such as the authenticated user or correlation IDs. Prefer `get(req)` by default. Use `lookup(req)` only when the context is conditionally set or conditionally accessed. `set(req, value)` writes the value, `get(req)` throws if it is missing, and `lookup(req)` returns `undefined` when it is optional.
 
 ```ts
-import { context, handler, router, Controller } from "expressstruct";
+import { context, handler, router, Controller } from "express-serverstruct";
 
 const currentUser = context<{ id: string }>({
   onError: "Missing authenticated user",

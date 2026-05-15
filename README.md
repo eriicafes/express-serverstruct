@@ -1,12 +1,12 @@
-# Expressstruct
+# Express Serverstruct
 
 Typesafe and modular servers with [Express](https://expressjs.com/).
 
-`expressstruct` provides simple helpers for structuring Express applications around reusable route modules, request validation with Zod, and OpenAPI generation.
+`express-serverstruct` provides simple helpers for structuring Express applications around reusable route modules, request validation with Zod, and OpenAPI generation.
 
 ## Skills
 
-Install the expressstruct agent skills with:
+Install the express-serverstruct agent skills with:
 
 ```sh
 npx skills add eriicafes/expressstruct
@@ -17,7 +17,7 @@ See [skills/README.md](./skills/README.md) for the available skills.
 ## Installation
 
 ```sh
-npm i expressstruct express zod
+npm i express-serverstruct express zod
 ```
 
 To use OpenAPI generation, also install:
@@ -39,7 +39,7 @@ import {
   HTTPError,
   router,
   type Server,
-} from "expressstruct";
+} from "express-serverstruct";
 
 class UsersController extends Controller {
   public routes() {
@@ -93,7 +93,7 @@ bootstrap(new App()).listen();
 
 ## Server
 
-A server is the root of an `expressstruct` app. Use it to configure global middleware, mount the top-level route tree, and define error handling, and startup behavior.
+A server is the root of an `express-serverstruct` app. Use it to configure global middleware, mount the top-level route tree, and define error handling, and startup behavior.
 
 ```ts
 import express from "express";
@@ -104,7 +104,7 @@ import {
   handler,
   HTTPError,
   type Server,
-} from "expressstruct";
+} from "express-serverstruct";
 
 class App implements Server {
   routes() {
@@ -153,7 +153,7 @@ A route module can register its routes to a parent app or router. Use route modu
 Use `router()` to define a route module:
 
 ```ts
-import { handler, router } from "expressstruct";
+import { handler, router } from "express-serverstruct";
 
 const healthRoutes = router("/health", (app) => {
   app.get(
@@ -168,7 +168,7 @@ const healthRoutes = router("/health", (app) => {
 Use `group()` to mount several route modules under one prefix:
 
 ```ts
-import { group } from "expressstruct";
+import { group } from "express-serverstruct";
 
 const routes = group("/api", healthRoutes, usersRoutes);
 ```
@@ -180,7 +180,7 @@ Use `createRoutes()` when you want the functional style instead of a class.
 A controller is a class-based route module. It extends the abstract `Controller` base class and returns routes from the `routes()` method.
 
 ```ts
-import { Controller, handler, router } from "expressstruct";
+import { Controller, handler, router } from "express-serverstruct";
 
 class UsersController extends Controller {
   public routes() {
@@ -205,7 +205,7 @@ Use `router()` to mount a controller under another route:
 
 ```ts
 import express from "express";
-import { router } from "expressstruct";
+import { router } from "express-serverstruct";
 
 const routes = router("/api", (app, mount) => {
   app.use(express.json());
@@ -220,7 +220,7 @@ const routes = router("/api", (app, mount) => {
 `handler()` and `errorHandler()` wrap async Express handlers and forward thrown errors to `next()`:
 
 ```ts
-import { errorHandler, handler, HTTPError } from "expressstruct";
+import { errorHandler, handler, HTTPError } from "express-serverstruct";
 
 const getUser = handler(async (req, res) => {
   res.json({ id: req.params.id });
@@ -240,7 +240,7 @@ const onError = errorHandler(async (error, _req, res, _next) => {
 Throw `HTTPError` when you want structured application errors:
 
 ```ts
-import { HTTPError, handler } from "expressstruct";
+import { HTTPError, handler } from "express-serverstruct";
 
 const getUser = handler((req, res) => {
   if (req.params.id !== "1") {
@@ -256,7 +256,7 @@ const getUser = handler((req, res) => {
 `validate()` parses request data with Zod and returns only the requested pieces:
 
 ```ts
-import { handler, validate } from "expressstruct";
+import { handler, validate } from "express-serverstruct";
 import { z } from "zod";
 
 const createUserSchema = {
@@ -283,7 +283,7 @@ Validation failures throw `HTTPError` with `status: 400` and field-level `errors
 `context()` creates a typed request-scoped store backed by a unique property on the request object:
 
 ```ts
-import { context, handler, router } from "expressstruct";
+import { context, handler, router } from "express-serverstruct";
 
 const currentUser = context<{ id: string }>({
   onError: "Missing authenticated user",
@@ -324,7 +324,7 @@ import {
   openapiRoutes,
   schemas,
   type Server,
-} from "expressstruct";
+} from "express-serverstruct";
 
 class UserRouteSchemas {
   static getUser = schemas({
