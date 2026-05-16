@@ -35,12 +35,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eriicafes/expressstruct.git"
+    "url": "git+https://github.com/eriicafes/express-serverstruct.git"
   },
   "bugs": {
-    "url": "https://github.com/eriicafes/expressstruct/issues"
+    "url": "https://github.com/eriicafes/express-serverstruct/issues"
   },
-  "homepage": "https://github.com/eriicafes/expressstruct#readme",
+  "homepage": "https://github.com/eriicafes/express-serverstruct#readme",
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
     "@types/express": "^5.0.6",

@@ -4,16 +4,6 @@ Typesafe and modular servers with [Express](https://expressjs.com/).
 
 `express-serverstruct` provides simple helpers for structuring Express applications around reusable route modules, request validation with Zod, and OpenAPI generation.
 
-## Skills
-
-Install the express-serverstruct agent skills with:
-
-```sh
-npx skills add eriicafes/expressstruct
-```
-
-See [skills/README.md](./skills/README.md) for the available skills.
-
 ## Installation
 
 ```sh
@@ -25,6 +15,16 @@ To use OpenAPI generation, also install:
 ```sh
 npm i zod-openapi
 ```
+
+## AI Skills
+
+Install the express-serverstruct agent skills with:
+
+```sh
+npx skills add eriicafes/express-serverstruct
+```
+
+See [skills/README.md](./skills/README.md) for the available skills.
 
 ## Quick Start
 
