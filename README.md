@@ -32,6 +32,7 @@ See [skills/README.md](./skills/README.md) for the available skills.
 import express from "express";
 import {
   bootstrap,
+  controller,
   Controller,
   errorHandler,
   group,
@@ -41,14 +42,14 @@ import {
   type Server,
 } from "express-serverstruct";
 
-class UsersController extends Controller {
+class UsersController implements Controller {
   public routes() {
     return router("/users", (app) => {
-      app.get("/", this.lisUsers());
+      app.get("/", this.listUsers());
     });
   }
 
-  private lisUsers() {
+  private listUsers() {
     return handler((_req, res) => {
       res.json([]);
     });
@@ -57,7 +58,7 @@ class UsersController extends Controller {
 
 class App implements Server {
   routes() {
-    return group("/", new UsersController());
+    return group("/", controller(new UsersController()));
   }
 
   configure(app) {
@@ -108,7 +109,7 @@ import {
 
 class App implements Server {
   routes() {
-    return group("/api", new UsersController());
+    return group("/api", controller(new UsersController()));
   }
 
   configure(app) {
@@ -177,12 +178,12 @@ Use `createRoutes()` when you want the functional style instead of a class.
 
 ## Controllers
 
-A controller is a class-based route module. It extends the abstract `Controller` base class and returns routes from the `routes()` method.
+A controller is a class-based route module. It implements the `Controller` interface and returns routes from the `routes()` method. Use `controller()` to wrap one or more controllers into a `Routes` value before mounting.
 
 ```ts
-import { Controller, handler, router } from "express-serverstruct";
+import { Controller, controller, handler, router } from "express-serverstruct";
 
-class UsersController extends Controller {
+class UsersController implements Controller {
   public routes() {
     return router("/users", (app) => {
       app.get("/", this.listUsers());
@@ -195,21 +196,21 @@ class UsersController extends Controller {
 }
 ```
 
-Use `group()` to mount several controllers under one prefix:
+Use `controller()` with `group()` to mount several controllers under one prefix:
 
 ```ts
-const routes = group("/api", new UsersController(), new HealthController());
+const routes = group("/api", controller(new UsersController(), new HealthController()));
 ```
 
-Use `router()` to mount a controller under another route:
+Use `controller()` with `router()` to mount a controller under another route:
 
 ```ts
 import express from "express";
-import { router } from "express-serverstruct";
+import { controller, router } from "express-serverstruct";
 
 const routes = router("/api", (app, mount) => {
   app.use(express.json());
-  mount(new UsersController());
+  mount(controller(new UsersController()));
 });
 ```
 
@@ -317,6 +318,7 @@ import express from "express";
 import { z } from "zod";
 import {
   bootstrap,
+  controller,
   Controller,
   group,
   jsonResponse,
@@ -348,7 +350,7 @@ class UserRouteSchemas {
   });
 }
 
-class UsersController extends Controller {
+class UsersController implements Controller {
   private api = openapi();
 
   public routes() {
@@ -380,7 +382,7 @@ class UsersController extends Controller {
 
 class App implements Server {
   routes() {
-    return group("/", new UsersController(), openapiRoutes());
+    return group("/", controller(new UsersController()), openapiRoutes());
   }
   configure(app) {
     app.use(express.json());
