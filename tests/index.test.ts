@@ -619,4 +619,90 @@ describe("openapi", () => {
     expect(referenceResponse.headers["content-type"]).toContain("text/html");
     expect(referenceResponse.text).toContain("/docs");
   });
+
+  describe("path joining", () => {
+    const openapiOptions: OpenAPIDocumentOptions = {
+      openapi: "3.1.0",
+      info: { title: "Test API", version: "1.0.0" },
+    };
+
+    it("does not add a trailing slash when the method path is /", () => {
+      const api = openapi();
+      api.get("/", { responses: { 200: { description: "ok" } } });
+
+      const { doc } = bootstrap(
+        testServer(
+          api.router("/users", () => {}),
+          openapiOptions,
+        ),
+      );
+
+      const paths = Object.keys(doc!.doc().paths ?? {});
+      expect(paths).toContain("/users");
+      expect(paths).not.toContain("/users/");
+    });
+
+    it("does not add a base prefix when the router base is /", () => {
+      const api = openapi();
+      api.get("/users/{id}", { responses: { 200: { description: "User" } } });
+
+      const { doc } = bootstrap(
+        testServer(
+          api.router("/", () => {}),
+          openapiOptions,
+        ),
+      );
+
+      expect(Object.keys(doc!.doc().paths ?? {})).toContain("/users/{id}");
+    });
+
+    it("does not produce // when the router base has a trailing slash", () => {
+      const api = openapi();
+      api.get("/items", { responses: { 200: { description: "ok" } } });
+
+      const { doc } = bootstrap(
+        testServer(
+          api.router("/users/", () => {}),
+          openapiOptions,
+        ),
+      );
+
+      const paths = Object.keys(doc!.doc().paths ?? {});
+      expect(paths).toContain("/users/items");
+      expect(paths.some((p) => p.includes("//"))).toBe(false);
+    });
+
+    it("does not produce // when the group base has a trailing slash", () => {
+      const api = openapi();
+      api.get("/items", { responses: { 200: { description: "ok" } } });
+
+      const { doc } = bootstrap(
+        testServer(
+          group(
+            "/api/",
+            api.router("/users", () => {}),
+          ),
+          openapiOptions,
+        ),
+      );
+
+      const paths = Object.keys(doc!.doc().paths ?? {});
+      expect(paths).toContain("/api/users/items");
+      expect(paths.some((p) => p.includes("//"))).toBe(false);
+    });
+
+    it("resolves to / when both the router base and the method path are /", () => {
+      const api = openapi();
+      api.get("/", { responses: { 200: { description: "ok" } } });
+
+      const { doc } = bootstrap(
+        testServer(
+          api.router("/", () => {}),
+          openapiOptions,
+        ),
+      );
+
+      expect(Object.keys(doc!.doc().paths ?? {})).toContain("/");
+    });
+  });
 });
