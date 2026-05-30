@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   bootstrap,
   context,
+  controller,
   Controller,
   createRoutes,
   createServer,
@@ -75,7 +76,7 @@ describe("core api", () => {
 
 describe("routing", () => {
   it("mounts grouped routes and controller routes", async () => {
-    class UsersController extends Controller {
+    class UsersController implements Controller {
       public routes() {
         return router("/users", (app) => {
           app.get("/", this.listUsers());
@@ -99,7 +100,9 @@ describe("routing", () => {
     });
 
     const { app } = bootstrap(
-      testServer(group("/api", healthRoutes, new UsersController())),
+      testServer(
+        group("/api", healthRoutes, controller(new UsersController())),
+      ),
     );
 
     const healthResponse = await request(app).get("/api/health");

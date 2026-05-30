@@ -27,7 +27,7 @@ Open this reference when needed:
 
 ## Core Guidance
 
-Prefer a class-based `Server` for the root app and class-based `Controller` objects for substantial route modules. Controllers extend the abstract `Controller` base class and already satisfy `Routes`, so mount them directly. Use `createServer()` and `createRoutes()` when the codebase is intentionally following a functional style.
+Prefer a class-based `Server` for the root app and class-based `Controller` objects for substantial route modules. `Controller` is an interface, so classes `implement Controller`. Wrap controllers with `controller()` to produce a `Routes` value before mounting. Use `createServer()` and `createRoutes()` when the codebase is intentionally following a functional style.
 
 Put cross-cutting middleware like `express.json()` in `configure()`, return the top-level route tree from `routes()`, and keep terminal 404 and error handlers in `onNotFound()` and `onError()`. `onNotFound()` can throw `HTTPError` so `onError()` formats not-found responses centrally.
 
@@ -37,6 +37,7 @@ Use `onStart()` for startup work. It may return an async `onShutdown` function, 
 import express from "express";
 import {
   bootstrap,
+  controller,
   Controller,
   errorHandler,
   group,
@@ -46,7 +47,7 @@ import {
   type Server,
 } from "express-serverstruct";
 
-class UsersController extends Controller {
+class UsersController implements Controller {
   public routes() {
     return router("/users", (app) => {
       app.get("/", this.listUsers());
@@ -62,7 +63,7 @@ class UsersController extends Controller {
 
 class AppServer implements Server {
   routes() {
-    return group("/api", new UsersController());
+    return group("/api", controller(new UsersController()));
   }
   configure(app) {
     app.use(express.json());
@@ -99,7 +100,7 @@ bootstrap(new AppServer()).listen();
 
 Use `handler()` for normal middleware and route handlers, and `errorHandler()` for async Express error middleware. Both wrappers forward thrown exceptions to `next()`.
 
-Prefer a controller class by default. In class-based controllers, methods should return handlers. Middleware should generally be defined with `handler(...)` outside a controller, but it can be returned from a controller method when it is small and scoped to that controller.
+Middleware should generally be defined with `handler(...)` outside a controller, but it can be returned from a controller method when it is small and scoped to that controller.
 
 Keep HTTP concerns in handlers only. Other services should return domain results or domain errors, and handlers should translate those into `HTTPError` responses.
 
@@ -114,7 +115,13 @@ Use `validate(req, schema)` inside a handler when the route needs typed params, 
 Use `context<T>()` for request-scoped data such as the authenticated user or correlation IDs. Prefer `get(req)` by default. Use `lookup(req)` only when the context is conditionally set or conditionally accessed. `set(req, value)` writes the value, `get(req)` throws if it is missing, and `lookup(req)` returns `undefined` when it is optional.
 
 ```ts
-import { context, handler, router, Controller } from "express-serverstruct";
+import {
+  context,
+  controller,
+  Controller,
+  handler,
+  router,
+} from "express-serverstruct";
 
 const currentUser = context<{ id: string }>({
   onError: "Missing authenticated user",
@@ -125,7 +132,7 @@ const attachCurrentUser = handler((req, _res, next) => {
   next();
 });
 
-class UsersController extends Controller {
+class UsersController implements Controller {
   public routes() {
     return router("/users", (app) => {
       app.use(attachCurrentUser);

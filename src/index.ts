@@ -48,26 +48,16 @@ export interface Routes {
 }
 
 /**
- * Base class for reusable route modules.
+ * Interface for reusable route modules.
  *
- * A controller defines its routes via {@link routes} and automatically
- * satisfies {@link Routes}.
+ * A controller defines its routes via {@link routes}. Use {@link controller}
+ * to compose one or more controllers into a {@link Routes} value.
  */
-export abstract class Controller implements Routes {
+export interface Controller {
   /**
    * Returns the routes exposed by the controller.
    */
-  public abstract routes(): Routes;
-
-  /**
-   * Mounts this controller by delegating to its {@link routes}.
-   *
-   * @param target - Express application or router to mount into.
-   * @param doc - OpenAPI document builder, when documentation is enabled.
-   */
-  public mount(target: RouteTarget, doc: OpenAPIDocument | undefined): void {
-    this.routes().mount(target, doc);
-  }
+  routes(): Routes;
 }
 
 /**
@@ -241,6 +231,23 @@ export function group(base: string, ...routes: Routes[]): Routes {
       const router = Router();
       for (const route of routes) route.mount(router, doc);
       parent.use(base, router);
+    },
+  };
+}
+
+/**
+ * Combines one or more controllers into a single route collection.
+ *
+ * Each controller's {@link Controller.routes} is mounted in order onto the
+ * target.
+ *
+ * @param controllers - Controllers to compose.
+ * @returns A route definition with first-class OpenAPI support.
+ */
+export function controller(...controllers: Controller[]): Routes {
+  return {
+    mount(target, doc) {
+      for (const c of controllers) c.routes().mount(target, doc);
     },
   };
 }

@@ -70,6 +70,7 @@ import express from "express";
 import { z } from "zod";
 import {
   bootstrap,
+  controller,
   Controller,
   errorHandler,
   HTTPError,
@@ -82,7 +83,7 @@ import {
   type Server,
 } from "express-serverstruct";
 
-class UsersController extends Controller {
+class UsersController implements Controller {
   private api = openapi();
 
   public routes() {
@@ -128,7 +129,7 @@ class AppServer implements Server {
   }
   routes() {
     return router("/", (_app, mount) => {
-      mount(new UsersController(), openapiRoutes());
+      mount(controller(new UsersController()), openapiRoutes());
     });
   }
   onNotFound() {
